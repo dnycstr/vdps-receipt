@@ -27,7 +27,7 @@ export const ReceiptCreate: React.FC = () => {
   useEffect(() => {
     document.title = 'Create Receipt';
 
-    setItems([{ particular: '', quantity: 1, unitPrice: 0, total: 0 }]);
+    setItems([{ particular: '', quantity: '', unitPrice: '', total: 0 }]);
   }, []);
   return (
     <>
@@ -87,16 +87,15 @@ export const ReceiptCreate: React.FC = () => {
                               <Input
                                 label="Quantity"
                                 title="Input Quantity"
+                                placeholder="Quantity"
                                 value={item.quantity}
                                 textalign="right"
                                 onChange={(event) => {
                                   const newItems = [...items];
-                                  newItems[index].quantity = Number(
-                                    event.target.value
-                                  );
+                                  newItems[index].quantity = event.target.value;
                                   newItems[index].total =
                                     Number(event.target.value) *
-                                    newItems[index].unitPrice;
+                                    Number(newItems[index].unitPrice);
                                   setItems(newItems);
                                 }}
                               />
@@ -108,12 +107,11 @@ export const ReceiptCreate: React.FC = () => {
                                 textalign="right"
                                 onChange={(event) => {
                                   const newItems = [...items];
-                                  newItems[index].unitPrice = Number(
-                                    event.target.value
-                                  );
+                                  newItems[index].unitPrice =
+                                    event.target.value;
                                   newItems[index].total =
                                     Number(event.target.value) *
-                                    newItems[index].quantity;
+                                    Number(newItems[index].quantity);
                                   setItems(newItems);
                                 }}
                               />
@@ -148,8 +146,8 @@ export const ReceiptCreate: React.FC = () => {
                                 ...items,
                                 {
                                   particular: '',
-                                  quantity: 0,
-                                  unitPrice: 0,
+                                  quantity: '',
+                                  unitPrice: '',
                                   total: 0,
                                 },
                               ]);

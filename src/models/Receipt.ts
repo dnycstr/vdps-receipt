@@ -13,8 +13,8 @@ export interface ReceiptViewModel {
 export interface ReceiptItemViewModel {
   id?: number;
   particular: string;
-  quantity: number;
-  unitPrice: number;
+  quantity: string;
+  unitPrice: string;
   total: number;
 }
 
@@ -38,8 +38,8 @@ export const defaultReceiptViewModel: ReceiptViewModel = {
 
 export const defaultReceiptItemViewModel: ReceiptItemViewModel = {
   particular: '',
-  quantity: 0,
-  unitPrice: 0,
+  quantity: '0',
+  unitPrice: '0',
   total: 0,
 };
 

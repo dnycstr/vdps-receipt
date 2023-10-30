@@ -1,3 +1,4 @@
+import { PlusCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -36,7 +37,9 @@ export const ReceiptEdit: React.FC = () => {
         if (result.items) {
           setItems(result.items);
         } else {
-          setItems([{ particular: '', quantity: 1, unitPrice: 0, total: 0 }]);
+          setItems([
+            { particular: '', quantity: '1', unitPrice: '0', total: 0 },
+          ]);
         }
       }
       setIsLoading(false);
@@ -108,16 +111,16 @@ export const ReceiptEdit: React.FC = () => {
                                 <Input
                                   label="Quantity"
                                   title="Input Quantity"
+                                  placeholder="Quantity"
                                   value={item.quantity}
                                   textalign="right"
                                   onChange={(event) => {
                                     const newItems = [...items];
-                                    newItems[index].quantity = Number(
-                                      event.target.value
-                                    );
+                                    newItems[index].quantity =
+                                      event.target.value;
                                     newItems[index].total =
                                       Number(event.target.value) *
-                                      newItems[index].unitPrice;
+                                      Number(newItems[index].unitPrice);
                                     setItems(newItems);
                                   }}
                                 />
@@ -129,12 +132,12 @@ export const ReceiptEdit: React.FC = () => {
                                   textalign="right"
                                   onChange={(event) => {
                                     const newItems = [...items];
-                                    newItems[index].unitPrice = Number(
-                                      event.target.value
-                                    );
+                                    newItems[index].unitPrice =
+                                      event.target.value;
+
                                     newItems[index].total =
                                       Number(event.target.value) *
-                                      newItems[index].quantity;
+                                      Number(newItems[index].quantity);
                                     setItems(newItems);
                                   }}
                                 />
@@ -145,12 +148,39 @@ export const ReceiptEdit: React.FC = () => {
                                   value={item.total}
                                   textalign="right"
                                 />
+                                <button
+                                  type="button"
+                                  className="mt-6 p-2 bg-red-400"
+                                  onClick={() => {
+                                    const newItems = [...items];
+                                    newItems.splice(index, 1);
+                                    setItems(newItems);
+                                  }}
+                                >
+                                  <TrashIcon className="h-4 w-4" />
+                                </button>
                               </div>
                               <hr />
                             </>
                           ))}
                           <div className="flex flex-col md:flex-row justify-between">
-                            <div>&nbsp;</div>
+                            <button
+                              type="button"
+                              className="mt-1 p-2 text-white bg-green-400 flex flex-row"
+                              onClick={() => {
+                                setItems([
+                                  ...items,
+                                  {
+                                    particular: '',
+                                    quantity: '',
+                                    unitPrice: '',
+                                    total: 0,
+                                  },
+                                ]);
+                              }}
+                            >
+                              <PlusCircleIcon className="h-6 w-6" /> Item
+                            </button>
 
                             <div>
                               <label className="text-gray-700 text-xl p-4">

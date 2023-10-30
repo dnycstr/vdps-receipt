@@ -26,6 +26,7 @@ type Props = {
   title?: string;
   value: any;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 };
 
 export const Input: React.FC<Props> = ({
@@ -36,6 +37,7 @@ export const Input: React.FC<Props> = ({
   title,
   value,
   onChange,
+  onBlur,
 }) => {
   return (
     <div className="w-full">
@@ -50,6 +52,7 @@ export const Input: React.FC<Props> = ({
           title={title}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
         />
       </div>
     </div>
