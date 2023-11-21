@@ -5,7 +5,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
   entry: {
-    contactapp: [
+    receiptapp: [
       path.resolve(__dirname, '..', './src/modules/receiptapp/index.tsx'),
     ],
   },
