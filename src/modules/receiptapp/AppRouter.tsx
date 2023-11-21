@@ -9,6 +9,8 @@ import {
   ReceiptEdit,
   ReceiptList,
 } from './pages/Receipts';
+import { Settings } from './pages/Settings/Settings';
+import { SettingsList } from './pages/Settings/SettingsList';
 
 import { routes } from '@config/routes';
 
@@ -36,6 +38,11 @@ export const AppRouter = createHashRouter([
             element: <ReceiptEdit />,
           },
         ],
+      },
+      {
+        path: `${routes.SETTINGS}`,
+        element: <Settings />,
+        children: [{ index: true, element: <SettingsList /> }],
       },
     ],
   },

@@ -1,7 +1,7 @@
 import { PlusCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { Formik } from 'formik';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { BoxBodyColumn, BoxHeader, BoxMedium } from '@components/Box';
 import {
@@ -16,6 +16,7 @@ import {
   Input,
   SubmitButton,
 } from '@components/Forms';
+import { Select } from '@components/Forms/Select';
 import { routes } from '@config/routes';
 import {
   ReceiptItemViewModel,
@@ -24,11 +25,23 @@ import {
 } from '@models/Receipt';
 import { ReceiptService } from '@services/Receipt';
 
+interface SelectOptions {
+  selected?: boolean;
+  value: string;
+  text: string;
+}
+
 export const ReceiptEdit: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [isSettingsLoading, setIsSettingsLoading] = useState(true);
   const [data, setData] = useState<ReceiptViewModel>(defaultReceiptViewModel);
   const [items, setItems] = useState<ReceiptItemViewModel[]>([]);
+  const [particultarOptions, setParticularOptions] = useState<SelectOptions[]>(
+    []
+  );
 
   const loadData = () => {
     ReceiptService.getById(Number(id)).then((result) => {
@@ -42,14 +55,35 @@ export const ReceiptEdit: React.FC = () => {
           ]);
         }
       }
-      setIsLoading(false);
+      setIsDataLoading(false);
     });
   };
+
+  const loadSettings = () => {
+    ReceiptService.getSettings().then((result) => {
+      if (result) {
+        const options: SelectOptions[] = [];
+
+        try {
+          JSON.parse(result).forEach((element: any) => {
+            options.push({ value: element, text: element });
+          });
+          setParticularOptions(options);
+        } catch {}
+      }
+      setIsSettingsLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    if (!isSettingsLoading && !isDataLoading) setIsLoading(false);
+  }, [isSettingsLoading, isDataLoading]);
 
   useEffect(() => {
     document.title = 'Edit Receipt';
 
     loadData();
+    loadSettings();
   }, []);
 
   if (isLoading) {
@@ -59,16 +93,14 @@ export const ReceiptEdit: React.FC = () => {
       <>
         <Formik
           initialValues={data}
-          //validationSchema={ReceiptValidation}
           validateOnBlur={true}
           validateOnChange={true}
-          onSubmit={(values, actions) => {
+          onSubmit={(values) => {
             values.items = items;
             ReceiptService.update(Number(id), values);
 
             alert('Successfully updated a new record');
-            actions.setSubmitting(false);
-            actions.resetForm();
+            navigate(`${routes.RECEIPTS}`);
           }}
         >
           {(formikProps) => {
@@ -96,12 +128,12 @@ export const ReceiptEdit: React.FC = () => {
                                 key={index}
                                 className="flex flex-col md:flex-row mt-1"
                               >
-                                <Input
+                                <Select
                                   label="Particular"
-                                  title="Particular"
                                   placeholder="Particular"
-                                  value={item.particular}
-                                  onChange={(event) => {
+                                  defaultValue={item.particular}
+                                  selection={particultarOptions}
+                                  changeHandler={(event) => {
                                     const newItems = [...items];
                                     newItems[index].particular =
                                       event.target.value;

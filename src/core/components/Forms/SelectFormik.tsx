@@ -1,3 +1,4 @@
+import { useField, FieldHookConfig } from 'formik';
 import tw from 'tailwind-styled-components';
 
 interface BaseSelectProps {
@@ -5,7 +6,7 @@ interface BaseSelectProps {
 }
 
 const BaseSelect = tw.select<BaseSelectProps>`
-mt-1 block w-64 rounded-md  py-2 pl-3 pr-10 text-base  focus:outline-none  sm:text-sm
+mt-1 block w-full rounded-md  py-2 pl-3 pr-10 text-base  focus:outline-none  sm:text-sm
 ${(props) =>
   !props.hasError &&
   'border-gray-300 focus:border-primary-500 focus:ring-primary-500'} 
@@ -21,36 +22,26 @@ interface SelectOptions {
 
 type Props = {
   label?: string;
-  placeholder?: string;
-  defaultValue?: string;
   selection: SelectOptions[];
-  changeHandler?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-};
+} & FieldHookConfig<string>;
 
-export const Select: React.FC<Props> = ({
+export const SelectFormik: React.FC<Props> = ({
   label,
-  placeholder,
-  defaultValue,
   selection,
-  changeHandler,
+  ...props
 }) => {
+  const [field, meta] = useField(props);
   return (
-    <div className="w-64">
-      <label className="block w-40 text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      <BaseSelect
-        hasError={false}
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        onChange={changeHandler}
-      >
+    <div>
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <BaseSelect {...field} hasError={!!meta.error}>
         {selection.map((row, index) => (
           <option key={index} value={row.value}>
             {row.text}
           </option>
         ))}
       </BaseSelect>
+      {meta.error ? <div className="text-red-500">{meta.error}</div> : null}
     </div>
   );
 };

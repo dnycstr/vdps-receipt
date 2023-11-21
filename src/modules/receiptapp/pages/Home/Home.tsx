@@ -1,4 +1,4 @@
-import { TicketIcon } from '@heroicons/react/20/solid';
+import { CogIcon, TicketIcon } from '@heroicons/react/20/solid';
 import { useNavigate } from 'react-router-dom';
 import tw from 'tailwind-styled-components';
 
@@ -23,6 +23,15 @@ export const Home = () => {
             >
               <TicketIcon className="text-green-700 mr-4 flex-shrink-0 h-20 w-20" />
               <div>Receipts</div>
+            </AppBox>
+            <AppBox
+              onClick={() => {
+                navigate('/settings');
+              }}
+              title="Go to settings"
+            >
+              <CogIcon className="text-grey-400 mr-4 flex-shrink-0 h-20 w-20" />
+              <div>Settings</div>
             </AppBox>
           </div>
         </PageContent>

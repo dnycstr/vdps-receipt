@@ -18,6 +18,14 @@ export interface ReceiptItemViewModel {
   total: number;
 }
 
+export interface ReceiptSettings {
+  settings?: string;
+}
+
+export const defaultReceiptSettings: ReceiptSettings = {
+  settings: '',
+};
+
 export interface ReceiptTableViewModel extends TableViewModel {
   data: ReceiptViewModel[];
 }

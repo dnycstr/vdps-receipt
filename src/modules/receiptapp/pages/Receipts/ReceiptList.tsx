@@ -34,7 +34,6 @@ export const ReceiptList: React.FC = () => {
     ReceiptService.getList(dataUrlQueryPage, DEFAULT_PAGE_SIZE).then(
       (result) => {
         setData(result);
-        console.log(result);
         setIsLoading(false);
       }
     );
@@ -86,6 +85,7 @@ export const ReceiptList: React.FC = () => {
                     <tr>
                       <TableHeaderLeft>Date</TableHeaderLeft>
                       <TableHeaderCenter>Name</TableHeaderCenter>
+                      <TableHeaderCenter>Total</TableHeaderCenter>
                       <TableHeaderRight></TableHeaderRight>
                     </tr>
                   </thead>
@@ -99,6 +99,15 @@ export const ReceiptList: React.FC = () => {
                           {row.paymentDate.toString().substring(0, 10)}
                         </TableDataLeft>
                         <TableDataCenter>{row.payee}</TableDataCenter>
+                        <TableDataCenter>
+                          <span className="w-full text-center">
+                            {row.items.reduce(
+                              (accumulator, currentValue) =>
+                                accumulator + currentValue.total,
+                              0
+                            )}
+                          </span>
+                        </TableDataCenter>
                         <TableDataRight>
                           <PrimaryActionLink
                             id={Number(row.id)}

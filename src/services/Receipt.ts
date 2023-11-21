@@ -103,4 +103,24 @@ export const ReceiptService = {
       resolve(true);
     });
   },
+  getSettings: async function (): Promise<string> {
+    return new Promise((resolve) => {
+      const data = localStorage.getItem('receiptSettings');
+      let jsonData = '';
+
+      if (data) {
+        try {
+          jsonData = data;
+        } catch {
+          jsonData = '';
+        }
+      }
+
+      resolve(jsonData);
+    });
+  },
+  updateSettings: async function (settings: string) {
+    localStorage.setItem('receiptSettings', settings);
+    return;
+  },
 };
