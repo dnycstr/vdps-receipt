@@ -13,6 +13,7 @@ import { CancelLinkButton, Input } from '@components/Forms';
 import { routes } from '@config/routes';
 import { ReceiptViewModel, defaultReceiptViewModel } from '@models/Receipt';
 import { ReceiptService } from '@services/Receipt';
+import { numberFormat } from '@utils/numberFormat';
 
 export const ReceiptDetails: React.FC = () => {
   const { id } = useParams();
@@ -78,11 +79,16 @@ export const ReceiptDetails: React.FC = () => {
 
                   <div>
                     <label className="text-gray-700 text-xl p-4">Total</label>
+                    <span className="mr-2 text-2xl">₱</span>
                     <span className="text-2xl p-2">
-                      {data.items.reduce(
-                        (accumulator, currentValue) =>
-                          accumulator + currentValue.total,
-                        0
+                      {numberFormat.format(
+                        Number(
+                          data.items.reduce(
+                            (accumulator, currentValue) =>
+                              accumulator + currentValue.total,
+                            0
+                          )
+                        )
                       )}
                     </span>
                   </div>

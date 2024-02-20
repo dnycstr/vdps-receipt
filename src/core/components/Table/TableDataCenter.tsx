@@ -9,3 +9,11 @@ export const TableDataCenter: React.FC<Props> = ({ children }) => {
     </td>
   );
 };
+
+export const TableDataCenterTR: React.FC<Props> = ({ children }) => {
+  return (
+    <td className="whitespace-nowrap px-3 py-4 text-right text-sm text-gray-500">
+      {children}
+    </td>
+  );
+};

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
+import pillarians from './pillarians.png';
 import vdps from './vdps.png';
 
 export const LayoutHeader: React.FC = () => {
@@ -8,7 +9,7 @@ export const LayoutHeader: React.FC = () => {
   return (
     <>
       <div
-        className="bg-green-900 text-white mx-auto flex items-center justify-center"
+        className="header-div text-white mx-auto flex items-center justify-center"
         onClick={() => {
           navigate('/');
         }}
@@ -23,6 +24,9 @@ export const LayoutHeader: React.FC = () => {
           </div>
           <div className="text-xs md:text-base">Burgos, 1860 Rodriguez </div>
           <div className="text-xs md:text-base">(Montalban) Rizal </div>
+        </div>
+        <div>
+          <img className="h-20 w-20 md:h-32 md:w-32 mx-auto" src={pillarians} />
         </div>
       </div>
     </>

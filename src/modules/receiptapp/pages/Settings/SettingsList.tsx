@@ -8,7 +8,7 @@ import {
   FormSectionContainer,
 } from '@components/Container';
 import { CancelLinkButton, SubmitButton } from '@components/Forms';
-import { MultiInput } from '@components/Forms/MultiInput';
+import { MultiPairInput } from '@components/Forms/MultiPairInput';
 import { ReceiptSettings, defaultReceiptSettings } from '@models/Receipt';
 import { ReceiptService } from '@services/Receipt';
 
@@ -19,7 +19,7 @@ export const SettingsList: React.FC = () => {
   const loadData = () => {
     ReceiptService.getSettings().then((result) => {
       if (result) {
-        setData({ settings: result });
+        setData({ settings: JSON.stringify(result) });
       }
       setIsLoading(false);
     });
@@ -41,12 +41,12 @@ export const SettingsList: React.FC = () => {
           validateOnBlur={true}
           validateOnChange={true}
           onSubmit={(values, actions) => {
-            values;
-            ReceiptService.updateSettings(values.settings ?? '');
+            ReceiptService.updateSettings(
+              JSON.stringify(values.settings) ?? ''
+            );
 
             alert('Successfully updated settings');
             actions.setSubmitting(false);
-            actions.resetForm();
           }}
         >
           {(formikProps) => {
@@ -58,7 +58,7 @@ export const SettingsList: React.FC = () => {
                     <form method="POST" onSubmit={formikProps.handleSubmit}>
                       <FormContainer>
                         <FormSectionContainer>
-                          <MultiInput label="Settings" name="settings" />
+                          <MultiPairInput label="Particulars" name="settings" />
                         </FormSectionContainer>
 
                         <FormButtonsContainer>

@@ -23,8 +23,22 @@ export interface ReceiptSettings {
 }
 
 export const defaultReceiptSettings: ReceiptSettings = {
-  settings: '',
+  settings: JSON.stringify([{ key: '', value: '0' }]),
 };
+
+export interface ParticularViewModel {
+  name: string;
+  unitPrice: number;
+}
+
+export interface ParticularTableViewModel extends TableViewModel {
+  data: ParticularViewModel[];
+}
+
+export interface ParticularTableStorageModel {
+  data: ParticularTableViewModel[];
+  lastId: number;
+}
 
 export interface ReceiptTableViewModel extends TableViewModel {
   data: ReceiptViewModel[];

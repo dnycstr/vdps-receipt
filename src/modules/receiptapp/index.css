@@ -39,3 +39,10 @@ body {
     display: none;
   }
 }
+
+.header-div {
+  background-image: url('./pages/Layout/vdps_grounds.jpg');
+  background-size: cover; /* Cover the entire div */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-position: center; /* Center the image */
+}

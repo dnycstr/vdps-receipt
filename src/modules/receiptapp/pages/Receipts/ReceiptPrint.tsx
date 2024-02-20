@@ -1,8 +1,10 @@
 import React from 'react';
 
-import vdps from './vdps.png';
+import pillarians from '../Layout/pillarians.png';
+import vdps from '../Layout/vdps.png';
 
 import { ReceiptViewModel } from '@models/Receipt';
+import { numberFormat } from '@utils/numberFormat';
 
 interface ReceiptPrintProps {
   receipt: ReceiptViewModel;
@@ -22,6 +24,9 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({ receipt }) => {
           </div>
           <div className="text-xs md:text-base">Burgos, 1860 Rodriguez </div>
           <div className="text-xs md:text-base">(Montalban) Rizal </div>
+        </div>
+        <div>
+          <img className="h-20 w-20 md:h-32 md:w-32 mx-auto" src={pillarians} />
         </div>
       </div>
       <hr />
@@ -62,10 +67,15 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({ receipt }) => {
       <hr />
       <div className="text-right">
         <label>Total:</label>
+        <span className="mr-2 text-2xl">₱</span>
         <span>
-          {receipt.items.reduce(
-            (accumulator, currentValue) => accumulator + currentValue.total,
-            0
+          {numberFormat.format(
+            Number(
+              receipt.items.reduce(
+                (accumulator, currentValue) => accumulator + currentValue.total,
+                0
+              )
+            )
           )}
         </span>
       </div>

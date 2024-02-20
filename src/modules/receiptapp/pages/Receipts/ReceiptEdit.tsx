@@ -24,6 +24,7 @@ import {
   defaultReceiptViewModel,
 } from '@models/Receipt';
 import { ReceiptService } from '@services/Receipt';
+import { numberFormat } from '@utils/numberFormat';
 
 interface SelectOptions {
   selected?: boolean;
@@ -218,11 +219,16 @@ export const ReceiptEdit: React.FC = () => {
                               <label className="text-gray-700 text-xl p-4">
                                 Total
                               </label>
+                              <span className="mr-2 text-2xl">₱</span>
                               <span className="text-2xl p-2">
-                                {items.reduce(
-                                  (accumulator, currentValue) =>
-                                    accumulator + currentValue.total,
-                                  0
+                                {numberFormat.format(
+                                  Number(
+                                    items.reduce(
+                                      (accumulator, currentValue) =>
+                                        accumulator + currentValue.total,
+                                      0
+                                    )
+                                  )
                                 )}
                               </span>
                             </div>

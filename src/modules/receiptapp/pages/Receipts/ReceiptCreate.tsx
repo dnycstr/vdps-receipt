@@ -21,6 +21,7 @@ import { Select } from '@components/Forms/Select';
 import { routes } from '@config/routes';
 import { ReceiptItemViewModel, defaultReceiptViewModel } from '@models/Receipt';
 import { ReceiptService } from '@services/Receipt';
+import { numberFormat } from '@utils/numberFormat';
 
 interface SelectOptions {
   selected?: boolean;
@@ -37,8 +38,6 @@ export const ReceiptCreate: React.FC = () => {
   );
 
   const navigate = useNavigate();
-
-  const nf = new Intl.NumberFormat('en-US');
 
   const loadSettings = () => {
     ReceiptService.getSettings().then((result) => {
@@ -160,7 +159,9 @@ export const ReceiptCreate: React.FC = () => {
                                   label="Total"
                                   title="Total"
                                   placeholder="Total"
-                                  value={nf.format(Number(item.total))}
+                                  value={numberFormat.format(
+                                    Number(item.total)
+                                  )}
                                   textalign="right"
                                 />
                                 <button
@@ -201,8 +202,9 @@ export const ReceiptCreate: React.FC = () => {
                               <label className="text-gray-700 text-xl p-4">
                                 Total
                               </label>
+                              <span className="mr-2 text-2xl">₱</span>
                               <span className="text-2xl p-2">
-                                {nf.format(
+                                {numberFormat.format(
                                   Number(
                                     items.reduce(
                                       (accumulator, currentValue) =>

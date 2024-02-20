@@ -18,6 +18,7 @@ import {
 import { routes } from '@config/routes';
 import { defaultReceiptTableViewModel } from '@models/Receipt';
 import { ReceiptService } from '@services/Receipt';
+import { numberFormat } from '@utils/numberFormat';
 import { getNextPage, getPreviousPage } from '@utils/pagination';
 
 const DEFAULT_PAGE = 1;
@@ -85,7 +86,9 @@ export const ReceiptList: React.FC = () => {
                     <tr>
                       <TableHeaderLeft>Date</TableHeaderLeft>
                       <TableHeaderCenter>Name</TableHeaderCenter>
-                      <TableHeaderCenter>Total</TableHeaderCenter>
+                      <TableHeaderCenter>
+                        <div className="w-full text-center">Total</div>
+                      </TableHeaderCenter>
                       <TableHeaderRight></TableHeaderRight>
                     </tr>
                   </thead>
@@ -100,13 +103,18 @@ export const ReceiptList: React.FC = () => {
                         </TableDataLeft>
                         <TableDataCenter>{row.payee}</TableDataCenter>
                         <TableDataCenter>
-                          <span className="w-full text-center">
-                            {row.items.reduce(
-                              (accumulator, currentValue) =>
-                                accumulator + currentValue.total,
-                              0
+                          <div className="w-full text-right">
+                            <span className="mr-2">₱</span>
+                            {numberFormat.format(
+                              Number(
+                                row.items.reduce(
+                                  (accumulator, currentValue) =>
+                                    accumulator + currentValue.total,
+                                  0
+                                )
+                              )
                             )}
-                          </span>
+                          </div>
                         </TableDataCenter>
                         <TableDataRight>
                           <PrimaryActionLink

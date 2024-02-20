@@ -1,3 +1,4 @@
+import { KeyValuePair } from '@components/Forms/MultiPairInput';
 import {
   ReceiptTableStorageModel,
   ReceiptTableViewModel,
@@ -103,17 +104,12 @@ export const ReceiptService = {
       resolve(true);
     });
   },
-  getSettings: async function (): Promise<string> {
+  getSettings: async function (): Promise<KeyValuePair[]> {
     return new Promise((resolve) => {
       const data = localStorage.getItem('receiptSettings');
-      let jsonData = '';
-
+      let jsonData: KeyValuePair[] = [{ key: '', value: '0' }];
       if (data) {
-        try {
-          jsonData = data;
-        } catch {
-          jsonData = '';
-        }
+        jsonData = JSON.parse(JSON.parse(data)) as KeyValuePair[];
       }
 
       resolve(jsonData);
