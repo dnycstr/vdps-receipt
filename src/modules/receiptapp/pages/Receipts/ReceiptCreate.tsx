@@ -4,52 +4,44 @@ import { Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { BoxBodyColumn, BoxHeader, BoxMedium } from '@components/Box';
 import {
-  FormButtonsContainer,
-  FormContainer,
-  FormSectionContainer,
-} from '@components/Container';
+  Box,
+  BoxBodyColumn,
+  BoxBodyMainColumn,
+  BoxBodySecondaryColumn,
+  BoxHeader,
+  BoxRowColumn,
+} from '@components/Box';
 import {
   CancelLinkButton,
   DateInput,
   FormikInput,
-  Input,
   SubmitButton,
 } from '@components/Forms';
-import { Select } from '@components/Forms/Select';
+import { KeyValuePair } from '@components/Forms/MultiPairInput';
 import { routes } from '@config/routes';
 import { ReceiptItemViewModel, defaultReceiptViewModel } from '@models/Receipt';
 import { ReceiptService } from '@services/Receipt';
 import { numberFormat } from '@utils/numberFormat';
 
-interface SelectOptions {
-  selected?: boolean;
-  value: string;
-  text: string;
-}
-
 export const ReceiptCreate: React.FC = () => {
   const [items, setItems] = useState<ReceiptItemViewModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSettingsLoading, setIsSettingsLoading] = useState(true);
-  const [particultarOptions, setParticularOptions] = useState<SelectOptions[]>(
-    []
-  );
+  const [particulars, setParticulars] = useState<KeyValuePair[]>([]);
+
+  const [currentParticular, setCurrentParticular] = useState<KeyValuePair>({
+    key: '',
+    value: '',
+  });
+  const [currentQuantity, setCurrentQuantity] = useState<number>(0);
 
   const navigate = useNavigate();
 
   const loadSettings = () => {
     ReceiptService.getSettings().then((result) => {
       if (result) {
-        const options: SelectOptions[] = [];
-
-        try {
-          JSON.parse(result).forEach((element: any) => {
-            options.push({ value: element, text: element });
-          });
-          setParticularOptions(options);
-        } catch {}
+        setParticulars(result);
       }
       setIsSettingsLoading(false);
     });
@@ -64,7 +56,7 @@ export const ReceiptCreate: React.FC = () => {
 
     loadSettings();
 
-    setItems([{ particular: '', quantity: '', unitPrice: '', total: 0 }]);
+    setItems([]);
   }, []);
   if (isLoading) {
     return <div>Loading...</div>;
@@ -89,121 +81,164 @@ export const ReceiptCreate: React.FC = () => {
           {(formikProps) => {
             return (
               <>
-                <BoxMedium>
-                  <BoxHeader title="Create a new record" />
-                  <BoxBodyColumn>
-                    <form method="POST" onSubmit={formikProps.handleSubmit}>
-                      <FormContainer>
-                        <FormSectionContainer>
-                          <FormikInput label="Name" name="payee" />
-
-                          <DateInput label="Date" name="paymentDate" />
-
-                          <FormikInput
-                            label="Payment Method"
-                            name="paymentMethod"
-                          />
-
-                          <hr />
-                          {items.map((item, index) => (
-                            <>
-                              <div
-                                key={index}
-                                className="flex flex-col md:flex-row mt-1"
-                              >
-                                <Select
-                                  label="Particular"
-                                  placeholder="Particular"
-                                  defaultValue={item.particular}
-                                  selection={particultarOptions}
-                                  changeHandler={(event) => {
-                                    const newItems = [...items];
-                                    newItems[index].particular =
-                                      event.target.value;
-                                    setItems(newItems);
-                                  }}
-                                />
-                                <Input
-                                  label="Quantity"
-                                  title="Input Quantity"
-                                  placeholder="Quantity"
-                                  value={item.quantity}
-                                  textalign="right"
-                                  onChange={(event) => {
-                                    const newItems = [...items];
-                                    newItems[index].quantity =
-                                      event.target.value;
-                                    newItems[index].total =
-                                      Number(event.target.value) *
-                                      Number(newItems[index].unitPrice);
-                                    setItems(newItems);
-                                  }}
-                                />
-                                <Input
-                                  label="Unit Price"
-                                  title="Input Unit Price"
-                                  placeholder="Unit Price"
-                                  value={item.unitPrice}
-                                  textalign="right"
-                                  onChange={(event) => {
-                                    const newItems = [...items];
-                                    newItems[index].unitPrice =
-                                      event.target.value;
-                                    newItems[index].total =
-                                      Number(event.target.value) *
-                                      Number(newItems[index].quantity);
-                                    setItems(newItems);
-                                  }}
-                                />
-                                <Input
-                                  label="Total"
-                                  title="Total"
-                                  placeholder="Total"
-                                  value={numberFormat.format(
-                                    Number(item.total)
-                                  )}
-                                  textalign="right"
-                                />
-                                <button
-                                  type="button"
-                                  className="mt-6 p-2 bg-red-400"
+                <form method="POST" onSubmit={formikProps.handleSubmit}>
+                  <Box>
+                    <BoxHeader title="Create a new record" />
+                    <BoxRowColumn>
+                      <BoxBodyMainColumn>
+                        <BoxBodyColumn>
+                          <div className="m-6 flex content-between">
+                            {particulars.map((item, index) => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="border-2 p-4 w-60 hover:bg-green-50 hover: cursor-pointer"
                                   onClick={() => {
-                                    const newItems = [...items];
-                                    newItems.splice(index, 1);
-                                    setItems(newItems);
+                                    setCurrentParticular({
+                                      key: item.key,
+                                      value: item.value,
+                                    });
                                   }}
                                 >
-                                  <TrashIcon className="h-4 w-4" />
-                                </button>
-                              </div>
-                              <hr />
-                            </>
-                          ))}
-                          <div className="flex flex-col md:flex-row justify-between">
-                            <button
-                              type="button"
-                              className="mt-1 p-2 text-white bg-green-400 flex flex-row"
-                              onClick={() => {
-                                setItems([
-                                  ...items,
-                                  {
-                                    particular: '',
-                                    quantity: '',
-                                    unitPrice: '',
-                                    total: 0,
-                                  },
-                                ]);
-                              }}
-                            >
-                              <PlusCircleIcon className="h-6 w-6" /> Item
-                            </button>
+                                  <span>{item.key}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <hr />
+                          <div className="p-6">
+                            {!!currentParticular.key &&
+                              !!currentParticular.value && (
+                                <>
+                                  <div>
+                                    <span>{currentParticular.key} : </span>
+                                    <span className="mr-2">₱</span>
+                                    <span>
+                                      {numberFormat.format(
+                                        Number(currentParticular.value)
+                                      )}
+                                    </span>
+                                  </div>
+                                  <br></br>
+                                  <input
+                                    className="w-full text-right px-10 rounded-md"
+                                    type="text"
+                                    value={currentQuantity}
+                                    onChange={(e) => {
+                                      setCurrentQuantity(
+                                        Number(e.target.value)
+                                      );
+                                    }}
+                                  />
+                                  <div className="w-full text-right py-6">
+                                    <span>Total : </span>
+                                    <span className="mr-2">₱</span>
+                                    <span>
+                                      {' '}
+                                      {numberFormat.format(
+                                        currentQuantity *
+                                          Number(currentParticular.value)
+                                      )}{' '}
+                                    </span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    className="mt-1 p-2 text-white w-full rounded-md bg-green-700 flex flex-row"
+                                    onClick={() => {
+                                      setItems([
+                                        ...items,
+                                        {
+                                          particular: currentParticular.key,
+                                          quantity: currentQuantity.toString(),
+                                          unitPrice: currentParticular.value,
+                                          total:
+                                            currentQuantity *
+                                            Number(currentParticular.value),
+                                        },
+                                      ]);
 
-                            <div>
+                                      setCurrentParticular({
+                                        key: '',
+                                        value: '',
+                                      });
+                                      setCurrentQuantity(0);
+                                    }}
+                                  >
+                                    <PlusCircleIcon className="h-6 w-6" /> Item
+                                  </button>
+                                </>
+                              )}
+                          </div>
+                        </BoxBodyColumn>
+                      </BoxBodyMainColumn>
+                      <BoxBodySecondaryColumn>
+                        <BoxBodyColumn>
+                          <div className="p-6 bg-yellow-50">
+                            <FormikInput label="Name" name="payee" />
+
+                            <DateInput label="Date" name="paymentDate" />
+
+                            <FormikInput
+                              label="Payment Method"
+                              name="paymentMethod"
+                            />
+
+                            <hr />
+
+                            <div className="w-full mt-6"></div>
+
+                            <hr></hr>
+
+                            {items.map((item, index) => (
+                              <>
+                                <div
+                                  key={index}
+                                  className="w-full flex flex-col md:flex-row mt-1"
+                                >
+                                  <div className="w-full flex flex-row justify-between">
+                                    <div className="flex flex-col">
+                                      <span> {item.particular}</span>
+
+                                      {!!item.quantity && !!item.unitPrice && (
+                                        <span>
+                                          {item.quantity} x{' '}
+                                          {numberFormat.format(
+                                            Number(item.unitPrice)
+                                          )}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div>
+                                      <span>
+                                        {numberFormat.format(
+                                          Number(item.total)
+                                        )}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    className="p-2 rounded-sm bg-red-50 hover:bg-red-400"
+                                    onClick={() => {
+                                      const newItems = [...items];
+                                      newItems.splice(index, 1);
+                                      setItems(newItems);
+                                    }}
+                                  >
+                                    <TrashIcon className=" rounded-sm h-4 w-4" />
+                                  </button>
+                                </div>
+                                <hr />
+                              </>
+                            ))}
+
+                            <div className="flex flex-row justify-between">
                               <label className="text-gray-700 text-xl p-4">
-                                Total
+                                Total : <span className="mr-2 text-2xl">₱</span>
                               </label>
-                              <span className="mr-2 text-2xl">₱</span>
-                              <span className="text-2xl p-2">
+
+                              <span className="text-2xl mt-2 p-2">
                                 {numberFormat.format(
                                   Number(
                                     items.reduce(
@@ -215,23 +250,25 @@ export const ReceiptCreate: React.FC = () => {
                                 )}
                               </span>
                             </div>
+
+                            <hr></hr>
+                            <div className="w-full mt-6 flex flex-row justify-between">
+                              <CancelLinkButton to={`${routes.RECEIPTS}`} />
+
+                              <SubmitButton
+                                label="Save"
+                                disabled={
+                                  formikProps.isSubmitting ||
+                                  !formikProps.isValid
+                                }
+                              />
+                            </div>
                           </div>
-                        </FormSectionContainer>
-
-                        <FormButtonsContainer>
-                          <CancelLinkButton to={`${routes.RECEIPTS}`} />
-
-                          <SubmitButton
-                            label="Save"
-                            disabled={
-                              formikProps.isSubmitting || !formikProps.isValid
-                            }
-                          />
-                        </FormButtonsContainer>
-                      </FormContainer>
-                    </form>
-                  </BoxBodyColumn>
-                </BoxMedium>
+                        </BoxBodyColumn>
+                      </BoxBodySecondaryColumn>
+                    </BoxRowColumn>
+                  </Box>
+                </form>
               </>
             );
           }}
