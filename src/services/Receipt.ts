@@ -5,9 +5,12 @@ import {
   ReceiptViewModel,
 } from '@models/Receipt';
 
+const RECEIPT_STORAGE_KEY = 'receiptRecords';
+const RECEIPT_SETTINGS_STORAGE_KEY = 'receiptParticulars';
+
 export const ReceiptService = {
   create: async function (receipt: ReceiptViewModel) {
-    const data = localStorage.getItem('receipt');
+    const data = localStorage.getItem(RECEIPT_STORAGE_KEY);
     let jsonData: ReceiptTableStorageModel = { data: [], lastId: 1 };
 
     if (data) {
@@ -18,13 +21,13 @@ export const ReceiptService = {
     jsonData.data.push(receipt);
     jsonData.lastId = jsonData.lastId + 1;
 
-    localStorage.setItem('receipt', JSON.stringify(jsonData));
+    localStorage.setItem(RECEIPT_STORAGE_KEY, JSON.stringify(jsonData));
 
     return;
   },
   getById: async function (id: number): Promise<ReceiptViewModel | undefined> {
     return new Promise((resolve) => {
-      const data = localStorage.getItem('receipt');
+      const data = localStorage.getItem(RECEIPT_STORAGE_KEY);
       let jsonData: ReceiptTableStorageModel = { data: [], lastId: 1 };
 
       if (data) {
@@ -42,10 +45,11 @@ export const ReceiptService = {
     searchString?: string,
     yearLevelFilter?: string,
     academicYearFilter?: string,
-    paymentDateFilter?: string
+    paymentDateFilter?: string,
+    isShowAll?: boolean
   ): Promise<ReceiptTableViewModel> {
     return new Promise((resolve) => {
-      const data = localStorage.getItem('receipt');
+      const data = localStorage.getItem(RECEIPT_STORAGE_KEY);
       let jsonData: ReceiptTableStorageModel = { data: [], lastId: 1 };
 
       if (data) {
@@ -85,7 +89,7 @@ export const ReceiptService = {
         totalPages = Math.ceil(totalRecords / pageSize);
       }
 
-      if (page && pageSize) {
+      if (!isShowAll && page && pageSize) {
         jsonData.data = jsonData.data.slice(
           (page - 1) * pageSize,
           (page - 1) * pageSize + pageSize
@@ -104,7 +108,7 @@ export const ReceiptService = {
     });
   },
   update: async function (id: number, Receipt: ReceiptViewModel) {
-    const data = localStorage.getItem('receipt');
+    const data = localStorage.getItem(RECEIPT_STORAGE_KEY);
     let jsonData: ReceiptTableStorageModel = { data: [], lastId: 1 };
 
     if (data) {
@@ -114,13 +118,13 @@ export const ReceiptService = {
     const index = jsonData.data.findIndex((x) => x.id === id);
     jsonData.data[index] = Receipt;
 
-    localStorage.setItem('receipt', JSON.stringify(jsonData));
+    localStorage.setItem(RECEIPT_STORAGE_KEY, JSON.stringify(jsonData));
 
     return;
   },
   delete: async function (id: number): Promise<boolean> {
     return new Promise((resolve) => {
-      const data = localStorage.getItem('receipt');
+      const data = localStorage.getItem(RECEIPT_STORAGE_KEY);
       let jsonData: ReceiptTableStorageModel = { data: [], lastId: 1 };
 
       if (data) {
@@ -129,14 +133,14 @@ export const ReceiptService = {
 
       jsonData.data = jsonData.data.filter((x) => x.id !== id);
 
-      localStorage.setItem('receipt', JSON.stringify(jsonData));
+      localStorage.setItem(RECEIPT_STORAGE_KEY, JSON.stringify(jsonData));
 
       resolve(true);
     });
   },
   getSettings: async function (): Promise<KeyValuePair[]> {
     return new Promise((resolve) => {
-      const data = localStorage.getItem('receiptSettings');
+      const data = localStorage.getItem(RECEIPT_SETTINGS_STORAGE_KEY);
       let jsonData: KeyValuePair[] = [{ key: '', value: '0' }];
       if (data) {
         jsonData = JSON.parse(JSON.parse(data)) as KeyValuePair[];
@@ -146,7 +150,7 @@ export const ReceiptService = {
     });
   },
   updateSettings: async function (settings: string) {
-    localStorage.setItem('receiptSettings', settings);
+    localStorage.setItem(RECEIPT_SETTINGS_STORAGE_KEY, settings);
     return;
   },
 };

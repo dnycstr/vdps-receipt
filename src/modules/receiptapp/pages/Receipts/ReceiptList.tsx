@@ -21,6 +21,7 @@ import { ReceiptService } from '@services/Receipt';
 import { numberFormat } from '@utils/numberFormat';
 import { getNextPage, getPreviousPage } from '@utils/pagination';
 
+const XLSX = require('xlsx');
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -32,6 +33,7 @@ export const ReceiptList: React.FC = () => {
   const [academicYearFilter, setAcademicYearFilter] = useState<string>('');
   const [paymentDateFilter, setPaymentDateFilter] = useState<string>('');
   const [yearLevelFilter, setYearLevelFilter] = useState<string>('');
+  const [isShowAll, setIsShowAll] = useState(false);
 
   const loadData = () => {
     setIsLoading(true);
@@ -42,7 +44,8 @@ export const ReceiptList: React.FC = () => {
       searchString,
       yearLevelFilter,
       academicYearFilter,
-      paymentDateFilter
+      paymentDateFilter,
+      isShowAll
     ).then((result) => {
       setData(result);
       setIsLoading(false);
@@ -74,11 +77,53 @@ export const ReceiptList: React.FC = () => {
 
   useEffect(() => {
     loadData();
-  }, [dataUrlQueryPage, searchString]);
+  }, [dataUrlQueryPage, searchString, isShowAll]);
 
   return (
     <>
       <Box>
+        <div className="w-full flex flex-row justify-end  p-2 ">
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md"
+            onClick={() => {
+              const excelData = data.data.map((x) => {
+                return {
+                  'Payment Date': x.paymentDate.toString().substring(0, 10),
+                  'Receipt No.': x.id,
+                  Name: x.payee,
+                  'Year Level': x.yearLevel,
+                  'Academic Year': x.academicYear,
+                  Total: x.items.reduce(
+                    (accumulator, currentValue) =>
+                      accumulator + currentValue.total,
+                    0
+                  ),
+                };
+              });
+
+              const ws = XLSX.utils.json_to_sheet(excelData);
+              const wb = XLSX.utils.book_new();
+              XLSX.utils.book_append_sheet(wb, ws, 'Receipts');
+
+              const date = new Date();
+
+              const day = String(date.getDate()).padStart(2, '0');
+              const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
+              const year = date.getFullYear();
+              const hours = date.getHours();
+              const minutes = date.getMinutes();
+              const seconds = date.getSeconds();
+
+              const dateString = `${day}-${month}-${year}-${hours}-${minutes}-${seconds}`;
+
+              console.log(dateString);
+
+              XLSX.writeFile(wb, `${dateString}-receipts.xlsx`);
+            }}
+          >
+            Export to Excel
+          </button>
+        </div>
         <div className="w-full flex flex-row justify-between p-2 border-b-2">
           <div className="flex flex-row">
             <input
@@ -108,6 +153,17 @@ export const ReceiptList: React.FC = () => {
                 setPaymentDateFilter(e.target.value);
               }}
             />
+            <div className="flex flex-row ml-4 w-20">
+              <input
+                className="mt-2"
+                type="checkbox"
+                value={isShowAll}
+                onChange={() => {
+                  setIsShowAll(!isShowAll);
+                }}
+              ></input>
+              <span className="ml-2 mt-1 whitespace-nowrap">No Paging</span>
+            </div>
           </div>
           <div>
             <button
@@ -200,15 +256,19 @@ export const ReceiptList: React.FC = () => {
                   </tbody>
                 </Table>
               </TableContainer>
-              <Pagination
-                page={data.page}
-                pageSize={data.pageSize}
-                total={data.total}
-                onPrevious={() => (data.page > 0 ? previousPage() : undefined)}
-                onNext={() =>
-                  data.page < data.totalPages ? nextPage() : undefined
-                }
-              />
+              {!isShowAll && (
+                <Pagination
+                  page={data.page}
+                  pageSize={data.pageSize}
+                  total={data.total}
+                  onPrevious={() =>
+                    data.page > 0 ? previousPage() : undefined
+                  }
+                  onNext={() =>
+                    data.page < data.totalPages ? nextPage() : undefined
+                  }
+                />
+              )}
             </>
           )}
         </BoxBodyColumn>
