@@ -5,6 +5,8 @@ export interface ReceiptViewModel {
   transactionDate: Date;
   receiptNumber: string;
   payee: string;
+  yearLevel: string;
+  academicYear: string;
   paymentDate: Date;
   paymentMethod: string;
   items: ReceiptItemViewModel[];
@@ -53,6 +55,8 @@ export const defaultReceiptViewModel: ReceiptViewModel = {
   transactionDate: new Date(),
   receiptNumber: '',
   payee: '',
+  yearLevel: '',
+  academicYear: '',
   paymentDate: new Date(),
   paymentMethod: '',
   items: [],

@@ -19,6 +19,7 @@ export const ReceiptDetails: React.FC = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ReceiptViewModel>(defaultReceiptViewModel);
+  const [printMode, setPrintMode] = useState<'AR' | 'OR' | 'NA'>('NA');
 
   const loadData = () => {
     ReceiptService.getById(Number(id)).then((result) => {
@@ -27,6 +28,10 @@ export const ReceiptDetails: React.FC = () => {
       }
       setIsLoading(false);
     });
+  };
+
+  const printCallback = () => {
+    setPrintMode('NA');
   };
 
   useEffect(() => {
@@ -44,43 +49,59 @@ export const ReceiptDetails: React.FC = () => {
               <FormSectionContainer>
                 <Input label="Name" value={data.payee} />
 
-                <Input
-                  label="Date"
-                  value={data.paymentDate.toString().substring(0, 10)}
-                />
+                <div className="w-full flex flex-row space-x-4">
+                  <Input label="Year Level" value={data.yearLevel} />
+                  <Input label="Academic Year" value={data.academicYear} />
+                </div>
 
-                <Input label="Payment Method" value={data.paymentMethod} />
+                <div className="w-full flex flex-row space-x-4">
+                  <Input label="Payment Method" value={data.paymentMethod} />
+                  <Input
+                    label="Date"
+                    value={data.paymentDate.toString().substring(0, 10)}
+                  />
+                </div>
 
                 <hr />
-                {data.items.map((item, index) => (
-                  <div key={index} className="flex flex-col md:flex-row mt-1">
-                    <Input placeholder="Particular" value={item.particular} />
-                    <Input
-                      title="Input Quantity"
-                      value={item.quantity}
-                      textalign="right"
-                    />
-                    <Input
-                      title="Input Unit Price"
-                      placeholder="Unit Price"
-                      value={item.unitPrice}
-                      textalign="right"
-                    />
-                    <Input
-                      title="Total"
-                      placeholder="Total"
-                      value={item.total}
-                      textalign="right"
-                    />
-                  </div>
-                ))}
-                <div className="flex flex-col md:flex-row justify-between">
-                  <div>&nbsp;</div>
+                <div className="p-6 bg-yellow-50">
+                  <div className="w-full mt-6"></div>
 
-                  <div>
-                    <label className="text-gray-700 text-xl p-4">Total</label>
-                    <span className="mr-2 text-2xl">₱</span>
-                    <span className="text-2xl p-2">
+                  <hr></hr>
+
+                  {data.items.map((item, index) => (
+                    <>
+                      <div
+                        key={index}
+                        className="w-full flex flex-col md:flex-row mt-1"
+                      >
+                        <div className="w-full flex flex-row justify-between">
+                          <div className="flex flex-col">
+                            <span> {item.particular}</span>
+
+                            {!!item.quantity && !!item.unitPrice && (
+                              <span className="text-xs italic">
+                                {item.quantity} x{' '}
+                                {numberFormat.format(Number(item.unitPrice))}
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <span>
+                              {numberFormat.format(Number(item.total))}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                    </>
+                  ))}
+
+                  <div className="flex flex-row justify-between">
+                    <label className="text-gray-700 text-xl p-4">
+                      Total : <span className="mr-2 text-2xl">₱</span>
+                    </label>
+
+                    <span className="text-2xl mt-2 p-2">
                       {numberFormat.format(
                         Number(
                           data.items.reduce(
@@ -92,24 +113,60 @@ export const ReceiptDetails: React.FC = () => {
                       )}
                     </span>
                   </div>
+
+                  {/* <hr></hr>
+                  <div className="w-full mt-6 flex flex-row justify-between">
+                    <CancelLinkButton to={`${routes.RECEIPTS}`} />
+
+                    <SubmitButton
+                      label="Save"
+                      disabled={
+                        formikProps.isSubmitting || !formikProps.isValid
+                      }
+                    />
+                  </div> */}
                 </div>
               </FormSectionContainer>
               <FormButtonsContainer>
-                <button
-                  type="button"
-                  className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  onClick={() => {
-                    window.print();
-                  }}
-                >
-                  Print
-                </button>
-                <CancelLinkButton to={`${routes.RECEIPTS}`} />
+                <div className="w-full justify-between flex flex-row">
+                  <CancelLinkButton to={`${routes.RECEIPTS}`} />
+                  <button
+                    type="button"
+                    className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onClick={() => {
+                      setPrintMode('AR');
+                    }}
+                  >
+                    Print Acknowledgement Receipt
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    onClick={() => {
+                      setPrintMode('OR');
+                    }}
+                  >
+                    Print Official Receipt
+                  </button>
+                </div>
               </FormButtonsContainer>
             </FormContainer>
           </BoxBodyColumn>
         </BoxMedium>
-        <ReceiptPrint receipt={data} />
+        {printMode == 'AR' && (
+          <ReceiptPrint
+            receipt={data}
+            printMode="AR"
+            printCallback={printCallback}
+          />
+        )}
+        {printMode == 'OR' && (
+          <ReceiptPrint
+            receipt={data}
+            printMode="OR"
+            printCallback={printCallback}
+          />
+        )}
       </>
     );
   }

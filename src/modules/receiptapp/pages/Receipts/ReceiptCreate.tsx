@@ -87,7 +87,29 @@ export const ReceiptCreate: React.FC = () => {
                     <BoxRowColumn>
                       <BoxBodyMainColumn>
                         <BoxBodyColumn>
-                          <div className="m-6 flex content-between">
+                          <div className="w-full p-6 flex flex-col space-y-4">
+                            <FormikInput label="Name" name="payee" />
+                            <div className="w-full flex flex-row space-x-4">
+                              <FormikInput
+                                label="Year Level"
+                                name="yearLevel"
+                              />
+                              <FormikInput
+                                label="Academic Year"
+                                name="academicYear"
+                              />
+                            </div>
+
+                            <div className="w-full flex flex-row space-x-4">
+                              <FormikInput
+                                label="Payment Method"
+                                name="paymentMethod"
+                              />
+                              <DateInput label="Date" name="paymentDate" />
+                            </div>
+                          </div>
+                          <hr />
+                          <div className="m-6 flex content-between flex-wrap">
                             {particulars.map((item, index) => {
                               return (
                                 <div
@@ -174,17 +196,6 @@ export const ReceiptCreate: React.FC = () => {
                       <BoxBodySecondaryColumn>
                         <BoxBodyColumn>
                           <div className="p-6 bg-yellow-50">
-                            <FormikInput label="Name" name="payee" />
-
-                            <DateInput label="Date" name="paymentDate" />
-
-                            <FormikInput
-                              label="Payment Method"
-                              name="paymentMethod"
-                            />
-
-                            <hr />
-
                             <div className="w-full mt-6"></div>
 
                             <hr></hr>
@@ -200,7 +211,7 @@ export const ReceiptCreate: React.FC = () => {
                                       <span> {item.particular}</span>
 
                                       {!!item.quantity && !!item.unitPrice && (
-                                        <span>
+                                        <span className="text-xs italic">
                                           {item.quantity} x{' '}
                                           {numberFormat.format(
                                             Number(item.unitPrice)
