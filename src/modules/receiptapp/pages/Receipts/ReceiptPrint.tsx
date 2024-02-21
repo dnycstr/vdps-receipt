@@ -89,7 +89,7 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
           <div key={index} className="w-full flex flex-col md:flex-row mt-1">
             <div className="w-full flex flex-row justify-between">
               <div className="flex flex-col">
-                <span> {item.particular}</span>
+                <span className="text-xs"> {item.particular}</span>
 
                 {!!item.quantity && !!item.unitPrice && (
                   <span className="text-xs italic">
@@ -99,7 +99,9 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
                 )}
               </div>
               <div>
-                <span>{numberFormat.format(Number(item.total))}</span>
+                <span className="text-xs">
+                  {numberFormat.format(Number(item.total))}
+                </span>
               </div>
             </div>
           </div>
@@ -107,10 +109,11 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
         </>
       ))}
       <hr />
-      <div className="text-right">
+      <div className="flex flex-row justify-between mt-6">
         <label>Total:</label>
-        <span className="mr-2 text-2xl">₱</span>
+
         <span>
+          <span className="mr-2 text-xl">₱</span>
           {numberFormat.format(
             Number(
               receipt.items.reduce(
@@ -120,6 +123,9 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
             )
           )}
         </span>
+      </div>
+      <div className="w-full text-center text-xs mt-6">
+        Thank you and God bless!
       </div>
     </div>
   );

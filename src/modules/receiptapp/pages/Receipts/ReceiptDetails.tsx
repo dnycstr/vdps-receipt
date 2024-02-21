@@ -47,18 +47,31 @@ export const ReceiptDetails: React.FC = () => {
           <BoxBodyColumn>
             <FormContainer>
               <FormSectionContainer>
-                <Input label="Name" value={data.payee} />
+                <Input label="Name" value={data.payee} readonly={true} />
 
                 <div className="w-full flex flex-row space-x-4">
-                  <Input label="Year Level" value={data.yearLevel} />
-                  <Input label="Academic Year" value={data.academicYear} />
+                  <Input
+                    label="Year Level"
+                    value={data.yearLevel}
+                    readonly={true}
+                  />
+                  <Input
+                    label="Academic Year"
+                    value={data.academicYear}
+                    readonly={true}
+                  />
                 </div>
 
                 <div className="w-full flex flex-row space-x-4">
-                  <Input label="Payment Method" value={data.paymentMethod} />
+                  <Input
+                    label="Payment Method"
+                    value={data.paymentMethod}
+                    readonly={true}
+                  />
                   <Input
                     label="Date"
                     value={data.paymentDate.toString().substring(0, 10)}
+                    readonly={true}
                   />
                 </div>
 
@@ -113,18 +126,6 @@ export const ReceiptDetails: React.FC = () => {
                       )}
                     </span>
                   </div>
-
-                  {/* <hr></hr>
-                  <div className="w-full mt-6 flex flex-row justify-between">
-                    <CancelLinkButton to={`${routes.RECEIPTS}`} />
-
-                    <SubmitButton
-                      label="Save"
-                      disabled={
-                        formikProps.isSubmitting || !formikProps.isValid
-                      }
-                    />
-                  </div> */}
                 </div>
               </FormSectionContainer>
               <FormButtonsContainer>
@@ -137,7 +138,7 @@ export const ReceiptDetails: React.FC = () => {
                       setPrintMode('AR');
                     }}
                   >
-                    Print Acknowledgement Receipt
+                    Print AR
                   </button>
                   <button
                     type="button"
@@ -146,7 +147,7 @@ export const ReceiptDetails: React.FC = () => {
                       setPrintMode('OR');
                     }}
                   >
-                    Print Official Receipt
+                    Print OR
                   </button>
                 </div>
               </FormButtonsContainer>
