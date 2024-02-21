@@ -38,7 +38,11 @@ export const ReceiptService = {
   },
   getList: async function (
     page?: number,
-    pageSize?: number
+    pageSize?: number,
+    searchString?: string,
+    yearLevelFilter?: string,
+    academicYearFilter?: string,
+    paymentDateFilter?: string
   ): Promise<ReceiptTableViewModel> {
     return new Promise((resolve) => {
       const data = localStorage.getItem('receipt');
@@ -46,6 +50,32 @@ export const ReceiptService = {
 
       if (data) {
         jsonData = JSON.parse(data) as ReceiptTableStorageModel;
+      }
+
+      if (searchString) {
+        jsonData.data = jsonData.data.filter((x) =>
+          x.payee.toLowerCase().includes(searchString.toLowerCase())
+        );
+      }
+
+      if (academicYearFilter) {
+        jsonData.data = jsonData.data.filter(
+          (x) => x.academicYear === academicYearFilter
+        );
+      }
+
+      if (paymentDateFilter) {
+        console.log(paymentDateFilter);
+        console.log(jsonData.data[0].paymentDate.toString().substring(0, 10));
+        jsonData.data = jsonData.data.filter(
+          (x) => x.paymentDate.toString().substring(0, 10) === paymentDateFilter
+        );
+      }
+
+      if (yearLevelFilter) {
+        jsonData.data = jsonData.data.filter(
+          (x) => x.yearLevel === yearLevelFilter
+        );
       }
 
       const totalRecords = jsonData.data.length;

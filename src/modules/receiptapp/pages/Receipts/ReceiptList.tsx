@@ -28,16 +28,25 @@ export const ReceiptList: React.FC = () => {
   const [dataUrlQueryPage, setDataUrlQueryPage] = useState(DEFAULT_PAGE);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(defaultReceiptTableViewModel);
+  const [searchString, setSearchString] = useState('');
+  const [academicYearFilter, setAcademicYearFilter] = useState<string>('');
+  const [paymentDateFilter, setPaymentDateFilter] = useState<string>('');
+  const [yearLevelFilter, setYearLevelFilter] = useState<string>('');
 
   const loadData = () => {
     setIsLoading(true);
 
-    ReceiptService.getList(dataUrlQueryPage, DEFAULT_PAGE_SIZE).then(
-      (result) => {
-        setData(result);
-        setIsLoading(false);
-      }
-    );
+    ReceiptService.getList(
+      dataUrlQueryPage,
+      DEFAULT_PAGE_SIZE,
+      searchString,
+      yearLevelFilter,
+      academicYearFilter,
+      paymentDateFilter
+    ).then((result) => {
+      setData(result);
+      setIsLoading(false);
+    });
   };
 
   const nextPage = () => {
@@ -64,15 +73,65 @@ export const ReceiptList: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log('useEffect LoadData');
     loadData();
-  }, [dataUrlQueryPage]);
+  }, [dataUrlQueryPage, searchString]);
 
   return (
     <>
       <Box>
+        <div className="w-full flex flex-row justify-between p-2 border-b-2">
+          <div className="flex flex-row">
+            <input
+              type="text"
+              className="w-full border-gray-200 focus:border-green-500 focus:ring focus:ring-green-200 rounded-md"
+              placeholder="Year Level Filter"
+              value={yearLevelFilter}
+              onChange={(e) => {
+                setYearLevelFilter(e.target.value);
+              }}
+            />
+            <input
+              type="text"
+              className="w-full border-gray-200 focus:border-green-500 focus:ring focus:ring-green-200 rounded-md"
+              placeholder="AY Filter"
+              value={academicYearFilter}
+              onChange={(e) => {
+                setAcademicYearFilter(e.target.value);
+              }}
+            />
+            <input
+              type="text"
+              className="w-full border-gray-200 focus:border-green-500 focus:ring focus:ring-green-200 rounded-md"
+              placeholder="Payment Date Filter"
+              value={paymentDateFilter}
+              onChange={(e) => {
+                setPaymentDateFilter(e.target.value);
+              }}
+            />
+          </div>
+          <div>
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
+              onClick={loadData}
+            >
+              Filter
+            </button>
+            <button
+              className="bg-gray-200 hover:bg-gray-400 text-gray-700 hover:text-white font-bold py-2 px-4 rounded-md"
+              onClick={() => {
+                setAcademicYearFilter('');
+                setYearLevelFilter('');
+                setPaymentDateFilter('');
+                loadData();
+              }}
+            >
+              Clear
+            </button>
+          </div>
+        </div>
         <TableSearchHead
-          searchEnabled={false}
+          searchEnabled={true}
+          setSearchString={setSearchString}
           loadData={loadData}
           createRoute={`${routes.RECEIPTS}/create`}
         />
@@ -84,8 +143,10 @@ export const ReceiptList: React.FC = () => {
                 <Table>
                   <thead>
                     <tr>
-                      <TableHeaderLeft>Date</TableHeaderLeft>
+                      <TableHeaderLeft>Payment Date</TableHeaderLeft>
                       <TableHeaderCenter>Name</TableHeaderCenter>
+                      <TableHeaderCenter>Year Level</TableHeaderCenter>
+                      <TableHeaderCenter>A.Y.</TableHeaderCenter>
                       <TableHeaderCenter>
                         <div className="w-full text-center">Total</div>
                       </TableHeaderCenter>
@@ -102,6 +163,8 @@ export const ReceiptList: React.FC = () => {
                           {row.paymentDate.toString().substring(0, 10)}
                         </TableDataLeft>
                         <TableDataCenter>{row.payee}</TableDataCenter>
+                        <TableDataCenter>{row.yearLevel}</TableDataCenter>
+                        <TableDataCenter>{row.academicYear}</TableDataCenter>
                         <TableDataCenter>
                           <div className="w-full text-right">
                             <span className="mr-2">₱</span>
