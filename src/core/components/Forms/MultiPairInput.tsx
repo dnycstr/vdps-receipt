@@ -10,7 +10,7 @@ interface BaseInputProps {
 }
 
 const BaseLeftInput = tw.input<BaseInputProps>`
-w-7/10 rounded-l-md shadow-sm bg-white sm:text-sm
+ w-80 rounded-l-md shadow-sm bg-white sm:text-sm
 ${(props) =>
   !props.haserror &&
   'border-gray-300 focus:border-primary-500 focus:ring-primary-500'} 
