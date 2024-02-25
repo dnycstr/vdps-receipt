@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 
+import pillarians from '../Layout/pillarians.png';
+import vdps from '../Layout/vdps.png';
+
 import { ReceiptViewModel } from '@models/Receipt';
 import { numberFormat } from '@utils/numberFormat';
 
@@ -20,22 +23,26 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
   }, []);
 
   return (
-    <div className="receipt-print">
-      <div className="mx-auto flex items-center justify-center">
-        {/* <div>
-          <img className="h-20 w-20 md:h-32 md:w-32 mx-auto" src={vdps} />
-        </div> */}
-        <div className="text-center py-4 md:py-10">
-          <div className="text-[10px]">VIRGEN DEL PILAR SCHOOL</div>
+    <div className="receipt-print font-printer">
+      <div className="flex items-center justify-center">
+        <div>
+          <img className="h-8 w-8 " src={vdps} />
+        </div>
+        <div className="text-center">
+          <div className="text-[8px]">VIRGEN DEL PILAR SCHOOL</div>
+        </div>
+        <div>
+          <img className="h-8 w-8 " src={pillarians} />
+        </div>
+      </div>
+      <div className="flex items-center justify-center">
+        <div className="text-center">
           <div className="text-[8px]">Ilo-Ilo St., Metro Montana, Phase 2,</div>
           <div className="text-[8px]">Burgos, 1860 Rodriguez </div>
           <div className="text-[8px]">(Montalban) Rizal </div>
         </div>
-        {/* <div>
-          <img className="h-20 w-20 md:h-32 md:w-32 mx-auto" src={pillarians} />
-        </div> */}
       </div>
-      <div className="w-full text-center text-[8px]">
+      <div className="w-full text-center text-[10px] mt-6">
         {printMode == 'OR' ? (
           <span>OFFICIAL RECEIPT</span>
         ) : (
@@ -73,9 +80,7 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
           <span>{receipt.paymentMethod}</span>
         </div>
       </div>
-
       <div className="flex flex-row justify-between text-[8px] mb-2"></div>
-
       <hr />
       {receipt.items.map((item, index) => (
         <>
@@ -117,9 +122,10 @@ export const ReceiptPrint: React.FC<ReceiptPrintProps> = ({
           )}
         </span>
       </div>
-      <div className="w-full text-center text-[10px] mt-6">
+      <div className="w-full text-center text-[10px] mt-6 mb-10">
         Thank you and God bless!
       </div>
+      <div className="w-full text-center">----------------</div>
     </div>
   );
 };

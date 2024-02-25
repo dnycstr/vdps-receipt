@@ -19,6 +19,13 @@ body {
   height: 100%;
 }
 
+@font-face {
+  font-family: 'Thermal-Printer';
+  font-style: normal;
+  font-weight: 400;
+  src: url('./assets/thermal-receipt.woff') format('woff');
+}
+
 @media print {
   body * {
     visibility: hidden;
@@ -26,6 +33,7 @@ body {
   .receipt-print,
   .receipt-print * {
     visibility: visible;
+    font-family: 'Thermal-Printer', sans-serif;
   }
   .receipt-print {
     position: absolute;

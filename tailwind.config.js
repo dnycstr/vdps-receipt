@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+        printer: ['Thermal-Printer', ...defaultTheme.fontFamily.mono],
       },
       colors: {
         primary: {
